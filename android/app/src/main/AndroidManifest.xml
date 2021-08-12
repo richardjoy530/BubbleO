@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ibis.bubble_o">
-   <application
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+
+    <application
         android:label="BubbleO"
         android:icon="@mipmap/ic_launcher">
         <activity
