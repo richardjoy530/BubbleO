@@ -1,3 +1,4 @@
+import 'package:BubbleO/ui/RegisterPage.dart';
 import 'package:BubbleO/ui/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -26,7 +27,7 @@ class _HomePageState extends State<HomePage> {
               ),
               trailing: IconButton(
                 icon: Icon(Icons.menu_rounded),
-                onPressed: () {},
+                onPressed: onMenuPressed,
               ),
             ),
           ),
@@ -60,5 +61,44 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     ));
+  }
+
+  onMenuPressed() {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+        ),
+        builder: (context) {
+          return Wrap(
+            children: <Widget>[
+              Divider(
+                thickness: 2,
+                indent: MediaQuery.of(context).size.width / 4,
+                endIndent: MediaQuery.of(context).size.width / 4,
+              ),
+              Column(
+                children: [
+                  ListTile(
+                    leading: Icon(
+                      Icons.add,
+                    ),
+                    title: Text('Add New Device',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w300)),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RegisterPage()));
+                    },
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
   }
 }

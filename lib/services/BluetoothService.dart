@@ -2,7 +2,7 @@ import 'package:BubbleO/model/data.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class BluetoothService {
-  FlutterBluetoothSerial bluetooth = FlutterBluetoothSerial.instance;
+  static FlutterBluetoothSerial bluetooth = FlutterBluetoothSerial.instance;
 
   scan() async {
     List<BluetoothDevice> bluetoothDevices = await bluetooth.getBondedDevices();
@@ -13,6 +13,10 @@ class BluetoothService {
         }
       }
     }
+  }
+
+  static getPairedDevices() async {
+    return await bluetooth.getBondedDevices();
   }
 
   registerNewDevice(BluetoothDevice _bluetoothDevice, String _deviceName) {
