@@ -1,3 +1,4 @@
+import 'package:BubbleO/model/data.dart';
 import 'package:BubbleO/ui/RegisterPage.dart';
 import 'package:BubbleO/ui/widgets.dart';
 import 'package:flutter/material.dart';
@@ -42,10 +43,10 @@ class _HomePageState extends State<HomePage> {
                         topRight: Radius.circular(30.0)),
                   ),
                   child: ListView.builder(
-                      itemCount: 2,
+                      itemCount: devices.length,
                       itemBuilder: (context, index) {
                         return genericTile(
-                            text: "Living Room",
+                            text: devices[index].deviceName!,
                             subTitle: LinearPercentIndicator(
                               lineHeight: 5.0,
                               percent: 0.9,

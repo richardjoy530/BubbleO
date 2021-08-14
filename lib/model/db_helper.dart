@@ -31,7 +31,7 @@ class DataBaseHelper {
     for (var map in value) {
       devices.add(Device.createFromDB(
           map["deviceName"].toString(), map["bluetoothAddress"].toString(),
-          deviceId: map['deviceId'] as int));
+          deviceId: map['id'] as int));
     }
     return devices;
   }

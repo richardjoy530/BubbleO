@@ -4,7 +4,7 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 class BluetoothService {
   static FlutterBluetoothSerial bluetooth = FlutterBluetoothSerial.instance;
 
-  scan() async {
+  static scan() async {
     List<BluetoothDevice> bluetoothDevices = await bluetooth.getBondedDevices();
     for (var bluetoothDevice in bluetoothDevices) {
       for (var device in devices) {
@@ -15,11 +15,12 @@ class BluetoothService {
     }
   }
 
-  static getPairedDevices() async {
+  static Future<List<BluetoothDevice>> getPairedDevices() async {
     return await bluetooth.getBondedDevices();
   }
 
-  registerNewDevice(BluetoothDevice _bluetoothDevice, String _deviceName) {
+  static registerNewDevice(
+      BluetoothDevice _bluetoothDevice, String _deviceName) {
     Device.createNew(_deviceName, _bluetoothDevice.address, _bluetoothDevice);
   }
 }
