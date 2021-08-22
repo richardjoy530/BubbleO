@@ -1,4 +1,4 @@
-import 'package:BubbleO/model/data.dart';
+import 'package:BubbleO/model/Device.dart';
 import 'package:BubbleO/ui/RegisterPage.dart';
 import 'package:BubbleO/ui/widgets.dart';
 import 'package:flutter/material.dart';

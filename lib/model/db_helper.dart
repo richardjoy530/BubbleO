@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'data.dart';
+import 'Device.dart';
 
 class DataBaseHelper {
   static Database? _db;
@@ -30,8 +30,9 @@ class DataBaseHelper {
     var value = await _db!.query("Devices");
     for (var map in value) {
       devices.add(Device.createFromDB(
-          map["deviceName"].toString(), map["bluetoothAddress"].toString(),
-          deviceId: map['id'] as int));
+          deviceId: map['id'] as int,
+          deviceName: map["deviceName"].toString(),
+          bluetoothAddress: map["bluetoothAddress"].toString()));
     }
     return devices;
   }

@@ -1,4 +1,4 @@
-import 'package:BubbleO/model/data.dart';
+import 'package:BubbleO/model/Device.dart';
 import 'package:BubbleO/model/db_helper.dart';
 import 'package:BubbleO/services/BluetoothService.dart';
 import 'package:flutter/material.dart';
