@@ -1,4 +1,5 @@
 import 'package:BubbleO/model/Device.dart';
+import 'package:BubbleO/ui/DevicePage.dart';
 import 'package:BubbleO/ui/RegisterPage.dart';
 import 'package:BubbleO/ui/widgets.dart';
 import 'package:flutter/material.dart';
@@ -46,16 +47,30 @@ class _HomePageState extends State<HomePage> {
                       itemCount: devices.length,
                       itemBuilder: (context, index) {
                         return genericTile(
-                            text: devices[index].deviceName!,
-                            subTitle: LinearPercentIndicator(
-                              lineHeight: 5.0,
-                              percent: 0.9,
-                              progressColor: Colors.black,
-                            ),
+                            text: devices[index].deviceName,
+                            subTitle:
+                                devices[index].getElapsedTime().inSeconds == 0
+                                    ? null
+                                    : LinearPercentIndicator(
+                                        lineHeight: 5.0,
+                                        percent: devices[index]
+                                                .getRemainingTime()
+                                                .inSeconds /
+                                            devices[index]
+                                                .getTotalDuration()
+                                                .inSeconds,
+                                        progressColor: Colors.black,
+                                      ),
                             color: Colors.white,
                             leadingIcon: Icons.wifi_tethering_rounded,
                             trailing: Icon(Icons.arrow_forward_ios_rounded),
-                            onTap: () {});
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          DevicePage(devices[index])));
+                            });
                       })),
             ),
           )

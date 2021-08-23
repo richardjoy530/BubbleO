@@ -5,6 +5,11 @@ class BluetoothService {
   static FlutterBluetoothSerial bluetooth = FlutterBluetoothSerial.instance;
 
   static scan() async {
+    bluetooth.isEnabled.then((value) {
+      if (value == false) {
+        bluetooth.requestEnable();
+      }
+    });
     List<BluetoothDevice> bluetoothDevices = await bluetooth.getBondedDevices();
     for (var bluetoothDevice in bluetoothDevices) {
       for (var device in devices) {

@@ -13,9 +13,10 @@ class Device extends CustomBluetoothDevice {
   late String deviceName;
 
   int _elapsedSec = 0;
-  bool _isStopped = false;
+  bool isStopped = true;
+  bool isPaused = false;
   late Timer _timer;
-  late Duration _duration;
+  Duration _duration = Duration();
 
   Device.createNew(this.deviceName, String _bluetoothAddress,
       BluetoothDevice _bluetoothDevice) {
@@ -47,24 +48,38 @@ class Device extends CustomBluetoothDevice {
   }
 
   void startTimer(void onFinish()) {
-    _isStopped = false;
+    isStopped = false;
+    isPaused = false;
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       _timer = timer;
-      if (!_isStopped) _elapsedSec += 1;
+      if (!isPaused) _elapsedSec += 1;
       if (_elapsedSec == _duration.inSeconds) {
         _timer.cancel();
         onFinish.call();
+        _elapsedSec = 0;
       }
     });
   }
 
+  void playTimer() {
+    isStopped = false;
+    isPaused = false;
+  }
+
   void pauseTimer() {
-    _isStopped = true;
+    isPaused = true;
+    isStopped = false;
   }
 
   void stopTimer() {
-    _isStopped = true;
+    isStopped = true;
+    isPaused = false;
     _timer.cancel();
+    _elapsedSec = 0;
+  }
+
+  Duration getTotalDuration() {
+    return _duration;
   }
 
   Duration getRemainingTime() {
