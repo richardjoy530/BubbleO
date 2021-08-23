@@ -16,11 +16,14 @@ abstract class CustomBluetoothDevice {
   //   print(data); // for debugging purpose
   // }
 
-  void establishConnection(void callback(Uint8List data)) {
-    BluetoothConnection.toAddress(bluetoothAddress).then((_connection) {
+  Future<bool> establishConnection(void callback(Uint8List data)) async {
+    var connected = false;
+    await BluetoothConnection.toAddress(bluetoothAddress).then((_connection) {
       bluetoothConnection = _connection;
+      connected = true;
       bluetoothConnection.input!.listen(callback);
     });
+    return connected;
   }
 
   bool isConnected() {

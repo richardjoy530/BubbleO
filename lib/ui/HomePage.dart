@@ -1,3 +1,4 @@
+import 'package:BubbleO/Events/TriggerFunctions.dart';
 import 'package:BubbleO/model/Device.dart';
 import 'package:BubbleO/ui/DevicePage.dart';
 import 'package:BubbleO/ui/RegisterPage.dart';
@@ -13,6 +14,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  StateFunction stateFunction = () {};
+
+  @override
+  void initState() {
+    stateFunction = () {
+      setState(() {
+        print("Calling setstate of HomePage");
+      });
+    };
+    Events.setStates.add(stateFunction);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    print(Events.setStates.remove(stateFunction));
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -65,6 +85,7 @@ class _HomePageState extends State<HomePage> {
                             leadingIcon: Icons.wifi_tethering_rounded,
                             trailing: Icon(Icons.arrow_forward_ios_rounded),
                             onTap: () {
+                              devices[index].connect();
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(

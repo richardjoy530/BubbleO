@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:core';
 import 'dart:typed_data';
 
+import 'package:BubbleO/Events/TriggerFunctions.dart';
 import 'package:BubbleO/model/CustomBluetoothDevice.dart';
 import 'package:BubbleO/model/db_helper.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -51,10 +52,15 @@ class Device extends CustomBluetoothDevice {
     isStopped = false;
     isPaused = false;
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      _timer = timer;
+      Events.setStates.forEach((function) {
+        function.call();
+      });
+      print(Events.setStates.length);
       if (!isPaused) _elapsedSec += 1;
       if (_elapsedSec == _duration.inSeconds) {
         _timer.cancel();
+        isStopped = true;
+        isPaused = false;
         onFinish.call();
         _elapsedSec = 0;
       }

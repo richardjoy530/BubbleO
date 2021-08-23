@@ -1,3 +1,4 @@
+import 'package:BubbleO/Events/TriggerFunctions.dart';
 import 'package:BubbleO/model/Device.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -13,17 +14,24 @@ class DevicePage extends StatefulWidget {
 }
 
 class _DevicePageState extends State<DevicePage> {
-  // final selectorColor = CustomSliderColors(
-  //   dotColor: Color(0xff02457a),
-  //   progressBarColor: Color(0xffd6e7ee),
-  //   hideShadow: true,
-  //   trackColor: Colors.lightBlue[50],
-  //   progressBarColors: [
-  //     Color(0xff00477d),
-  //     Color(0xff008bc0),
-  //     Color(0xff97cadb),
-  //   ],
-  // );
+  StateFunction stateFunction = () {};
+
+  @override
+  void initState() {
+    stateFunction = () {
+      setState(() {
+        print("Calling setstate of DevicePage");
+      });
+    };
+    Events.setStates.add(stateFunction);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    print(Events.setStates.remove(stateFunction));
+    super.dispose();
+  }
 
   final customColor = CustomSliderColors(
     dotColor: Color(0xff02457a),
@@ -54,12 +62,17 @@ class _DevicePageState extends State<DevicePage> {
         ),
         SleekCircularSlider(
           min: 0,
-          max: 21,
-          initialValue: 0,
+          max: widget.device.isStopped ? 21 : 360,
+          initialValue: widget.device.isStopped
+              ? 0
+              : 360 -
+                  ((widget.device.getRemainingTime().inSeconds /
+                          widget.device.getTotalDuration().inSeconds) *
+                      360),
           appearance: CircularSliderAppearance(
               animationEnabled: false,
-              startAngle: 270 + 45,
-              angleRange: 270,
+              startAngle: widget.device.isStopped ? 270 + 45 : 270,
+              angleRange: widget.device.isStopped ? 270 : 360,
               customWidths: CustomSliderWidths(
                 handlerSize: 20,
                 trackWidth: 5,
@@ -67,9 +80,12 @@ class _DevicePageState extends State<DevicePage> {
               ),
               size: (MediaQuery.of(context).size.width / 1.5) + 50,
               customColors: customColor),
-          onChange: (double value) {
-            // TODO
-          },
+          onChange: widget.device.isStopped
+              ? (double value) {
+                  widget.device
+                      .setTimer(Duration(minutes: mapValues(value.round())));
+                }
+              : null,
           innerWidget: (value) {
             return Center(
               child: widget.device.isStopped
