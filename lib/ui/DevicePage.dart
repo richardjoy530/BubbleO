@@ -1,6 +1,6 @@
 import 'package:BubbleO/Events/TriggerFunctions.dart';
 import 'package:BubbleO/model/Device.dart';
-import 'package:f_logs/f_logs.dart';
+import 'package:BubbleO/utils/Logger.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -19,10 +19,10 @@ class _DevicePageState extends State<DevicePage> {
 
   @override
   void initState() {
-    FLog.debug(className: "HomePage", methodName: "_buildRow1", text: "My log");
+    writeLog("DevicePage::initState()", Log.INFO);
     stateFunction = () {
       setState(() {
-        print("Calling setstate of DevicePage");
+        // writeLog("DevicePage->setstate() refreshing", Log.INFO);
       });
     };
     Events.setStates.add(stateFunction);
@@ -31,6 +31,7 @@ class _DevicePageState extends State<DevicePage> {
 
   @override
   void dispose() {
+    writeLog("DevicePage::dispose()", Log.INFO);
     print(Events.setStates.remove(stateFunction));
     super.dispose();
   }
@@ -74,8 +75,8 @@ class _DevicePageState extends State<DevicePage> {
               ),
               IconButton(
                   onPressed: () {
+                    writeLog("DevicePage::onTapRestart()", Log.INFO);
                     widget.device.sendMessage("65");
-                    FLog.exportLogs();
                     setState(() {
                       widget.device.stopTimer();
                     });
@@ -142,7 +143,8 @@ class _DevicePageState extends State<DevicePage> {
                         onTap: () {
                           if (widget.device.mainDuration.inMinutes != 0 &&
                               widget.device.isStopped)
-                            widget.device.startTimer(() {}); //TODO
+                            writeLog("DevicePage::onTapStart()", Log.INFO);
+                          widget.device.startTimer(() {}); //TODO
                         },
                         child: Container(
                           width: 150,
@@ -187,6 +189,7 @@ class _DevicePageState extends State<DevicePage> {
                     children: <Widget>[
                       GestureDetector(
                         onTap: () {
+                          writeLog("DevicePage::onTapStop()", Log.INFO);
                           setState(() {
                             widget.device.stopTimer();
                           });
@@ -229,6 +232,7 @@ class _DevicePageState extends State<DevicePage> {
                       ),
                       GestureDetector(
                         onTap: () {
+                          writeLog("DevicePage::onTapPlayPause()", Log.INFO);
                           widget.device.isPaused
                               ? widget.device.playTimer()
                               : widget.device.pauseTimer();

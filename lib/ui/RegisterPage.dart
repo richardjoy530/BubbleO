@@ -1,4 +1,5 @@
 import 'package:BubbleO/services/BluetoothService.dart';
+import 'package:BubbleO/utils/Logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -15,9 +16,14 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void initState() {
+    writeLog(
+        "RegisterPage::initState() fetching list of paired bluetooth devices",
+        Log.INFO);
     BluetoothService.getPairedDevices().then((value) {
       setState(() {
         bluetoothDevices = value;
+        writeLog(
+            "RegisterPage::initState() found $value paired devices", Log.INFO);
       });
     });
     super.initState();
@@ -70,6 +76,8 @@ class _RegisterPageState extends State<RegisterPage> {
                               title: Text(bluetoothDevices[index].name!),
                               onTap: () {
                                 setState(() {
+                                  writeLog("RegisterPage::onTapRegister()",
+                                      Log.INFO);
                                   BluetoothService.registerNewDevice(
                                       bluetoothDevices[index],
                                       bluetoothDevices[index].name!);

@@ -1,6 +1,7 @@
 import 'package:BubbleO/model/Device.dart';
 import 'package:BubbleO/model/db_helper.dart';
 import 'package:BubbleO/services/BluetoothService.dart';
+import 'package:BubbleO/utils/Logger.dart';
 import 'package:flutter/material.dart';
 
 import 'HomePage.dart';
@@ -33,11 +34,16 @@ class _LoadingState extends State<Loading> {
   }
 
   load() async {
+    await initialiseLogger();
+    startLogger();
+    writeLog("LoadingPage::load() Enter", Log.INFO);
     await DataBaseHelper.initializeDatabase();
     devices = await DataBaseHelper.getAllDevices();
+    writeLog("LoadingPage::load() Checking if bluetooth is enabled", Log.INFO);
     await BluetoothService.scan();
     await Future.delayed(Duration(seconds: 2));
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => HomePage()));
+    writeLog("LoadingPage::load() Exit", Log.INFO);
   }
 }

@@ -3,6 +3,7 @@ import 'package:BubbleO/model/Device.dart';
 import 'package:BubbleO/ui/DevicePage.dart';
 import 'package:BubbleO/ui/RegisterPage.dart';
 import 'package:BubbleO/ui/widgets.dart';
+import 'package:BubbleO/utils/Logger.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -20,20 +21,23 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     stateFunction = () {
       setState(() {
-        print("Calling setstate of HomePage");
+        // writeLog("HomePage->setstate() refreshing", Log.INFO);
       });
     };
     Events.setStates.add(stateFunction);
     super.initState();
+    writeLog("HomePage::initState()", Log.INFO);
   }
 
   @override
   void dispose() {
-    print(Events.setStates.remove(stateFunction));
     devices.forEach((device) {
       device.bluetoothConnection?.close();
       device.bluetoothConnection?.dispose();
     });
+    writeLog("HomePage::dispose()", Log.INFO);
+    writeLog("----- Logger stopped -----", Log.INFO);
+    stopLogger();
     super.dispose();
   }
 
@@ -88,7 +92,12 @@ class _HomePageState extends State<HomePage> {
                             leadingIcon: Icons.wifi_tethering_rounded,
                             trailing: Icon(Icons.arrow_forward_ios_rounded),
                             onTap: () async {
+                              writeLog(
+                                  "HomePage::onTap() DeviceTile", Log.INFO);
                               var result = await devices[index].connect();
+                              writeLog(
+                                  "HomePage::onTap() ${devices[index].deviceName} connection status: $result",
+                                  Log.INFO);
                               if (result)
                                 Navigator.push(
                                     context,
@@ -105,6 +114,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   onMenuPressed() {
+    writeLog("HomePage::onMenuPressed()", Log.INFO);
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => RegisterPage()));
     // showModalBottomSheet(

@@ -2,6 +2,7 @@ import 'package:BubbleO/ui/Loading.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
