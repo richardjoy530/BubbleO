@@ -17,13 +17,19 @@ class Device extends CustomBluetoothDevice {
   bool isStopped = true;
   bool isPaused = false;
   late Timer _timer;
-  Duration _duration = Duration();
+  Duration mainDuration = Duration();
 
   Device.createNew(this.deviceName, String _bluetoothAddress,
       BluetoothDevice _bluetoothDevice) {
     this.bluetoothAddress = _bluetoothAddress;
     this.bluetoothDevice = _bluetoothDevice;
-    DataBaseHelper.addDevice(this).then((value) => this.deviceId = value);
+    DataBaseHelper.addDevice(this).then((value) {
+      this.deviceId = value;
+      devices.add(this);
+      Events.setStates.forEach((function) {
+        function.call();
+      });
+    });
   }
 
   Device.createFromDB({
@@ -40,15 +46,16 @@ class Device extends CustomBluetoothDevice {
     print(data);
   }
 
-  void connect() {
-    establishConnection(onMessageReceived);
+  Future<bool> connect() async {
+    return await establishConnection(onMessageReceived);
   }
 
   void setTimer(Duration duration) {
-    _duration = duration;
+    mainDuration = duration;
   }
 
   void startTimer(void onFinish()) {
+    sendMessage(mainDuration.inMinutes.toString());
     isStopped = false;
     isPaused = false;
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -56,8 +63,8 @@ class Device extends CustomBluetoothDevice {
         function.call();
       });
       print(Events.setStates.length);
-      if (!isPaused) _elapsedSec += 1;
-      if (_elapsedSec == _duration.inSeconds) {
+      if (!isPaused && !isStopped) _elapsedSec += 1;
+      if (_elapsedSec == mainDuration.inSeconds) {
         _timer.cancel();
         isStopped = true;
         isPaused = false;
@@ -68,28 +75,34 @@ class Device extends CustomBluetoothDevice {
   }
 
   void playTimer() {
+    sendMessage("p");
     isStopped = false;
     isPaused = false;
   }
 
   void pauseTimer() {
+    sendMessage("h");
     isPaused = true;
     isStopped = false;
   }
 
   void stopTimer() {
+    sendMessage("s");
     isStopped = true;
     isPaused = false;
     _timer.cancel();
     _elapsedSec = 0;
+    Events.setStates.forEach((function) {
+      function.call();
+    });
   }
 
   Duration getTotalDuration() {
-    return _duration;
+    return mainDuration;
   }
 
   Duration getRemainingTime() {
-    return Duration(seconds: _duration.inSeconds - _elapsedSec);
+    return Duration(seconds: mainDuration.inSeconds - _elapsedSec);
   }
 
   Duration getElapsedTime() {

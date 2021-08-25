@@ -1,5 +1,6 @@
 import 'package:BubbleO/Events/TriggerFunctions.dart';
 import 'package:BubbleO/model/Device.dart';
+import 'package:f_logs/f_logs.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -18,6 +19,7 @@ class _DevicePageState extends State<DevicePage> {
 
   @override
   void initState() {
+    FLog.debug(className: "HomePage", methodName: "_buildRow1", text: "My log");
     stateFunction = () {
       setState(() {
         print("Calling setstate of DevicePage");
@@ -49,201 +51,229 @@ class _DevicePageState extends State<DevicePage> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-            body: Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Text(
-          widget.device.deviceName,
-          style: TextStyle(
-            fontSize: 30,
-            color: Color(0xff02457a),
-            // fontWeight: FontWeight.bold,
-          ),
-        ),
-        SleekCircularSlider(
-          min: 0,
-          max: widget.device.isStopped ? 21 : 360,
-          initialValue: widget.device.isStopped
-              ? 0
-              : 360 -
-                  ((widget.device.getRemainingTime().inSeconds /
-                          widget.device.getTotalDuration().inSeconds) *
-                      360),
-          appearance: CircularSliderAppearance(
-              animationEnabled: false,
-              startAngle: widget.device.isStopped ? 270 + 45 : 270,
-              angleRange: widget.device.isStopped ? 270 : 360,
-              customWidths: CustomSliderWidths(
-                handlerSize: 20,
-                trackWidth: 5,
-                progressBarWidth: 20,
-              ),
-              size: (MediaQuery.of(context).size.width / 1.5) + 50,
-              customColors: customColor),
-          onChange: widget.device.isStopped
-              ? (double value) {
-                  widget.device
-                      .setTimer(Duration(minutes: mapValues(value.round())));
-                }
-              : null,
-          innerWidget: (value) {
-            return Center(
-              child: widget.device.isStopped
-                  ? Text(
-                      '${getSeconds(mapValues(value.round()))}'
-                      ':00',
-                      style: TextStyle(fontSize: 40),
-                    )
-                  : Text(
-                      '${getMinuets(widget.device.getRemainingTime().inSeconds)}'
-                      ':${getSeconds(widget.device.getRemainingTime().inSeconds)}',
-                      style: TextStyle(fontSize: 40),
-                    ),
-              // child: Text(
-              //   '${getMinuets(((widget.device.getRemainingTime().inSeconds)))}'
-              //   ':${getSeconds(((widget.device.getRemainingTime().inSeconds)))}',
-              //   style: TextStyle(fontSize: 40),
-              // ),
-            );
-          },
-        ),
-        Container(
-          // height: 100,
-          child: widget.device.isStopped
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        widget.device.startTimer(() {}); //TODO
-                      },
-                      child: Container(
-                        width: 150,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color(0xff00477d),
-                              Color(0xff008bc0),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              offset: Offset(5, 5),
-                              blurRadius: 10,
-                            )
-                          ],
-                        ),
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'Start',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 30,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        widget.device.stopTimer();
-                      },
-                      child: Container(
-                        width: 100,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color(0xff00477d),
-                              Color(0xff008bc0),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              offset: Offset(5, 5),
-                              blurRadius: 10,
-                            )
-                          ],
-                        ),
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'Stop',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 30,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        widget.device.isPaused
-                            ? widget.device.playTimer()
-                            : widget.device.pauseTimer();
-                      },
-                      child: Container(
-                        width: 100,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color(0xff00477d),
-                              Color(0xff008bc0),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              offset: Offset(5, 5),
-                              blurRadius: 10,
-                            )
-                          ],
-                        ),
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              widget.device.isPaused ? 'Play' : 'Pause',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 30,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+            body: Padding(
+      padding: const EdgeInsets.only(top: 8.0, bottom: 20.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.bluetooth_connected,
+                  )),
+              Text(
+                widget.device.deviceName,
+                style: TextStyle(
+                  fontSize: 30,
+                  color: Color(0xff02457a),
+                  // fontWeight: FontWeight.bold,
                 ),
-        )
-      ],
+              ),
+              IconButton(
+                  onPressed: () {
+                    widget.device.sendMessage("65");
+                    FLog.exportLogs();
+                    setState(() {
+                      widget.device.stopTimer();
+                    });
+                  },
+                  icon: Icon(Icons.restart_alt_rounded))
+            ],
+          ),
+          Container(
+            child: SleekCircularSlider(
+              min: 0,
+              max: widget.device.isStopped ? 21 : 360,
+              initialValue: widget.device.isStopped
+                  ? 0
+                  : 360 -
+                      ((widget.device.getRemainingTime().inSeconds /
+                              widget.device.getTotalDuration().inSeconds) *
+                          360),
+              appearance: CircularSliderAppearance(
+                  animationEnabled: false,
+                  startAngle: 270,
+                  angleRange: 360,
+                  customWidths: CustomSliderWidths(
+                    handlerSize: 20,
+                    trackWidth: 5,
+                    progressBarWidth: 20,
+                  ),
+                  size: (MediaQuery.of(context).size.width / 1.5) + 50,
+                  customColors: customColor),
+              onChange: widget.device.isStopped
+                  ? (double value) {
+                      widget.device.setTimer(
+                          Duration(minutes: mapValues(value.round())));
+                    }
+                  : null,
+              innerWidget: (value) {
+                return Center(
+                  child: widget.device.isStopped
+                      ? Text(
+                          '${getSeconds(mapValues(value.round()))}'
+                          ':00',
+                          style: TextStyle(fontSize: 40),
+                        )
+                      : Text(
+                          '${getMinuets(widget.device.getRemainingTime().inSeconds)}'
+                          ':${getSeconds(widget.device.getRemainingTime().inSeconds)}',
+                          style: TextStyle(fontSize: 40),
+                        ),
+                  // child: Text(
+                  //   '${getMinuets(((widget.device.getRemainingTime().inSeconds)))}'
+                  //   ':${getSeconds(((widget.device.getRemainingTime().inSeconds)))}',
+                  //   style: TextStyle(fontSize: 40),
+                  // ),
+                );
+              },
+            ),
+          ),
+          Container(
+            // height: 100,
+            child: widget.device.isStopped
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      GestureDetector(
+                        onTap: () {
+                          if (widget.device.mainDuration.inMinutes != 0 &&
+                              widget.device.isStopped)
+                            widget.device.startTimer(() {}); //TODO
+                        },
+                        child: Container(
+                          width: 150,
+                          height: 70,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Color(0xff00477d),
+                                Color(0xff008bc0),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                offset: Offset(5, 5),
+                                blurRadius: 10,
+                              )
+                            ],
+                          ),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Start',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            widget.device.stopTimer();
+                          });
+                        },
+                        child: Container(
+                          width: 100,
+                          height: 70,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Color(0xff00477d),
+                                Color(0xff008bc0),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                offset: Offset(5, 5),
+                                blurRadius: 10,
+                              )
+                            ],
+                          ),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Stop',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          widget.device.isPaused
+                              ? widget.device.playTimer()
+                              : widget.device.pauseTimer();
+                        },
+                        child: Container(
+                          width: 100,
+                          height: 70,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Color(0xff00477d),
+                                Color(0xff008bc0),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                offset: Offset(5, 5),
+                                blurRadius: 10,
+                              )
+                            ],
+                          ),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                widget.device.isPaused ? 'Play' : 'Pause',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+          )
+        ],
+      ),
     )));
   }
 

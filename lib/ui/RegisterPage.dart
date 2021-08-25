@@ -74,6 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       bluetoothDevices[index],
                                       bluetoothDevices[index].name!);
                                 });
+                                Navigator.pop(context);
                               },
                             ),
                           ),

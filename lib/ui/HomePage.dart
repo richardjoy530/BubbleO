@@ -30,6 +30,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     print(Events.setStates.remove(stateFunction));
+    devices.forEach((device) {
+      device.bluetoothConnection?.close();
+      device.bluetoothConnection?.dispose();
+    });
     super.dispose();
   }
 
@@ -48,7 +52,7 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
               trailing: IconButton(
-                icon: Icon(Icons.menu_rounded),
+                icon: Icon(Icons.add_rounded),
                 onPressed: onMenuPressed,
               ),
             ),
@@ -68,29 +72,29 @@ class _HomePageState extends State<HomePage> {
                       itemBuilder: (context, index) {
                         return genericTile(
                             text: devices[index].deviceName,
-                            subTitle:
-                                devices[index].getElapsedTime().inSeconds == 0
-                                    ? null
-                                    : LinearPercentIndicator(
-                                        lineHeight: 5.0,
-                                        percent: devices[index]
-                                                .getRemainingTime()
-                                                .inSeconds /
-                                            devices[index]
-                                                .getTotalDuration()
-                                                .inSeconds,
-                                        progressColor: Colors.black,
-                                      ),
+                            subTitle: devices[index].isStopped
+                                ? null
+                                : LinearPercentIndicator(
+                                    lineHeight: 5.0,
+                                    percent: devices[index]
+                                            .getRemainingTime()
+                                            .inSeconds /
+                                        devices[index]
+                                            .getTotalDuration()
+                                            .inSeconds,
+                                    progressColor: Colors.black,
+                                  ),
                             color: Colors.white,
                             leadingIcon: Icons.wifi_tethering_rounded,
                             trailing: Icon(Icons.arrow_forward_ios_rounded),
-                            onTap: () {
-                              devices[index].connect();
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          DevicePage(devices[index])));
+                            onTap: () async {
+                              var result = await devices[index].connect();
+                              if (result)
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            DevicePage(devices[index])));
                             });
                       })),
             ),
@@ -101,41 +105,43 @@ class _HomePageState extends State<HomePage> {
   }
 
   onMenuPressed() {
-    showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-        ),
-        builder: (context) {
-          return Wrap(
-            children: <Widget>[
-              Divider(
-                thickness: 2,
-                indent: MediaQuery.of(context).size.width / 4,
-                endIndent: MediaQuery.of(context).size.width / 4,
-              ),
-              Column(
-                children: [
-                  ListTile(
-                    leading: Icon(
-                      Icons.add,
-                    ),
-                    title: Text('Add New Device',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w300)),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => RegisterPage()));
-                    },
-                  ),
-                ],
-              ),
-            ],
-          );
-        });
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => RegisterPage()));
+    // showModalBottomSheet(
+    //     isScrollControlled: true,
+    //     context: context,
+    //     shape: RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.only(
+    //           topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+    //     ),
+    //     builder: (context) {
+    //       return Wrap(
+    //         children: <Widget>[
+    //           Divider(
+    //             thickness: 2,
+    //             indent: MediaQuery.of(context).size.width / 4,
+    //             endIndent: MediaQuery.of(context).size.width / 4,
+    //           ),
+    //           Column(
+    //             children: [
+    //               ListTile(
+    //                 leading: Icon(
+    //                   Icons.add,
+    //                 ),
+    //                 title: Text('Add New Device',
+    //                     style: TextStyle(
+    //                         fontSize: 16, fontWeight: FontWeight.w300)),
+    //                 onTap: () {
+    //                   Navigator.push(
+    //                       context,
+    //                       MaterialPageRoute(
+    //                           builder: (context) => RegisterPage()));
+    //                 },
+    //               ),
+    //             ],
+    //           ),
+    //         ],
+    //       );
+    //     });
   }
 }
