@@ -108,14 +108,14 @@ class _DevicePageState extends State<DevicePage> {
               onChange: widget.device.isStopped
                   ? (double value) {
                       widget.device.setTimer(
-                          Duration(minutes: mapValues(value.round())));
+                          Duration(minutes: mapValues(value.floor())));
                     }
                   : null,
               innerWidget: (value) {
                 return Center(
                   child: widget.device.isStopped
                       ? Text(
-                          '${getSeconds(mapValues(value.round()))}'
+                          '${getSeconds(mapValues(value.floor()))}'
                           ':00',
                           style: TextStyle(fontSize: 40),
                         )

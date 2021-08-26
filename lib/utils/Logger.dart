@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 String downloadsPath = "";
 late File _localFile;
@@ -15,6 +16,7 @@ Future<void> initialiseLogger() async {
   var time =
       (DateTime.now().microsecondsSinceEpoch / 1000).floor() % 1629900000;
   _localFile = File('$downloadsPath/bubble_o_debug$time.log');
+  Fluttertoast.showToast(msg: "$downloadsPath/bubble_o_debug$time.log");
 }
 
 startLogger() async {
@@ -35,6 +37,7 @@ stopLogger() async {
 
 void writeLog(String msg, String level) {
   logQueue.add(DateTime.now().toString().substring(0, 19) + level + msg + "\n");
+  print(DateTime.now().toString().substring(0, 19) + level + msg + "\n");
 }
 
 class Log {

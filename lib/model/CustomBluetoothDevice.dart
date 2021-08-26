@@ -29,17 +29,32 @@ abstract class CustomBluetoothDevice {
       print("Already Connected");
       return true;
     }
+
     var connected = false;
     await BluetoothConnection.toAddress(bluetoothAddress).then((_connection) {
       writeLog(
           "CustomBluetoothDevice::establishConnection() serial connection established to $bluetoothAddress:${bluetoothDevice.name}",
           Log.INFO);
+
       bluetoothConnection = _connection;
       connected = true;
+
       writeLog(
           "CustomBluetoothDevice::establishConnection() listening  for messages started...",
           Log.INFO);
-      bluetoothConnection!.input!.listen(callback);
+
+      bluetoothConnection!.input!
+        ..handleError((error) {
+          writeLog(
+              "CustomBluetoothDevice::establishConnection()..handleError()",
+              Log.ERROR);
+        })
+        ..listen(callback).onError((error) {
+          writeLog(
+              "CustomBluetoothDevice::establishConnection()..listen().onError()",
+              Log.ERROR);
+        });
+
       print("connected to ${bluetoothDevice.name}");
       sendMessage("7");
       sendMessage("0");
@@ -47,11 +62,14 @@ abstract class CustomBluetoothDevice {
       writeLog(
           "CustomBluetoothDevice::establishConnection().onError Error: Failed to connect",
           Log.ERROR);
+
       Fluttertoast.showToast(
           msg: "Couldn't connect to: ${bluetoothDevice.name}");
-      print("Error: Failed to connect");
+    }).whenComplete(() {
+      writeLog("CustomBluetoothDevice::establishConnection()->whenComplete() ",
+          Log.WARN);
     });
-    print("Returning");
+
     writeLog("CustomBluetoothDevice::establishConnection() Exit", Log.INFO);
     return connected;
   }
