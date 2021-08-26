@@ -142,9 +142,10 @@ class _DevicePageState extends State<DevicePage> {
                       GestureDetector(
                         onTap: () {
                           if (widget.device.mainDuration.inMinutes != 0 &&
-                              widget.device.isStopped)
+                              widget.device.isStopped) {
                             writeLog("DevicePage::onTapStart()", Log.INFO);
-                          widget.device.startTimer(() {}); //TODO
+                            widget.device.startTimer(() {}); //TODO
+                          }
                         },
                         child: Container(
                           width: 150,
