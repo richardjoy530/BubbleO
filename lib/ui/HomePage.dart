@@ -45,6 +45,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+      backgroundColor: Color(0xFFF9FBFF),
       body: Column(
         children: [
           Container(
