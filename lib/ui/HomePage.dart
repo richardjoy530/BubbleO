@@ -1,5 +1,6 @@
 import 'package:BubbleO/Events/TriggerFunctions.dart';
 import 'package:BubbleO/model/Device.dart';
+import 'package:BubbleO/model/db_helper.dart';
 import 'package:BubbleO/ui/InfoPage.dart';
 import 'package:BubbleO/ui/RegisterPage.dart';
 import 'package:BubbleO/ui/widgets.dart';
@@ -19,6 +20,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    contextStack.add(this.context);
     stateFunction = () {
       setState(() {
         // writeLog("HomePage->setstate() refreshing", Log.INFO);
@@ -31,6 +33,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    contextStack.remove(this.context);
     devices.forEach((device) {
       device.bluetoothConnection?.close();
       device.bluetoothConnection?.dispose();
@@ -58,7 +61,7 @@ class _HomePageState extends State<HomePage> {
               ),
               trailing: IconButton(
                 icon: Icon(Icons.add_rounded),
-                onPressed: onMenuPressed,
+                onPressed: addDevice,
               ),
             ),
           ),
@@ -92,6 +95,9 @@ class _HomePageState extends State<HomePage> {
                             color: Colors.white,
                             leadingIcon: Icons.wifi_tethering_rounded,
                             trailing: Icon(Icons.arrow_forward_ios_rounded),
+                            onLongPress: () {
+                              options(devices[index]);
+                            },
                             onTap: () async {
                               writeLog(
                                   "HomePage::onTap() DeviceTile", Log.INFO);
@@ -114,45 +120,62 @@ class _HomePageState extends State<HomePage> {
     ));
   }
 
-  onMenuPressed() {
+  addDevice() {
     writeLog("HomePage::onMenuPressed()", Log.INFO);
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => RegisterPage()));
-    // showModalBottomSheet(
-    //     isScrollControlled: true,
-    //     context: context,
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.only(
-    //           topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-    //     ),
-    //     builder: (context) {
-    //       return Wrap(
-    //         children: <Widget>[
-    //           Divider(
-    //             thickness: 2,
-    //             indent: MediaQuery.of(context).size.width / 4,
-    //             endIndent: MediaQuery.of(context).size.width / 4,
-    //           ),
-    //           Column(
-    //             children: [
-    //               ListTile(
-    //                 leading: Icon(
-    //                   Icons.add,
-    //                 ),
-    //                 title: Text('Add New Device',
-    //                     style: TextStyle(
-    //                         fontSize: 16, fontWeight: FontWeight.w300)),
-    //                 onTap: () {
-    //                   Navigator.push(
-    //                       context,
-    //                       MaterialPageRoute(
-    //                           builder: (context) => RegisterPage()));
-    //                 },
-    //               ),
-    //             ],
-    //           ),
-    //         ],
-    //       );
-    //     });
+  }
+
+  options(Device device) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+        ),
+        builder: (context) {
+          return Wrap(
+            children: <Widget>[
+              Divider(
+                thickness: 2,
+                indent: MediaQuery.of(context).size.width / 4,
+                endIndent: MediaQuery.of(context).size.width / 4,
+              ),
+              Column(
+                children: [
+                  ListTile(
+                    leading: Icon(
+                      Icons.drive_file_rename_outline,
+                    ),
+                    title: Text('Rename Device',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w300)),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      await renameDevicePopUp(device);
+                      setState(() {});
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(
+                      Icons.delete_forever_rounded,
+                    ),
+                    title: Text('Delete Device',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w300)),
+                    onTap: () {
+                      setState(() {
+                        devices.remove(device);
+                        DataBaseHelper.removeDevice(device);
+                        Navigator.pop(context);
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
   }
 }

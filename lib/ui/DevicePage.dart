@@ -1,5 +1,6 @@
 import 'package:BubbleO/Events/TriggerFunctions.dart';
 import 'package:BubbleO/model/Device.dart';
+import 'package:BubbleO/ui/widgets.dart';
 import 'package:BubbleO/utils/Logger.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -16,23 +17,41 @@ class DevicePage extends StatefulWidget {
 
 class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
   StateFunction stateFunction = () {};
+  AnimationController? radialProgressAnimationController;
+  late Animation<double> progressAnimation;
+  double progressDegrees = 0;
 
   @override
   void initState() {
+    contextStack.add(this.context);
+    progressDegrees = 360 -
+        ((widget.device.getRemainingTime().inSeconds /
+                widget.device.getTotalDuration().inSeconds) *
+            360);
     writeLog("DevicePage::initState()", Log.INFO);
     stateFunction = () {
-      setState(() {
-        // writeLog("DevicePage->setstate() refreshing", Log.INFO);
-      });
+      setState(() {});
     };
     Events.setStates.add(stateFunction);
+    if (widget.device.isStopped == false) {
+      runAnimation(
+          begin: (360 / (widget.device.mainDuration.inMinutes * 60)) *
+              widget.device.getElapsedTime().inSeconds,
+          end: 360);
+
+      if (widget.device.isPaused == false) {
+        radialProgressAnimationController?.forward();
+      }
+    }
     super.initState();
   }
 
   @override
   void dispose() {
+    contextStack.remove(this.context);
     writeLog("DevicePage::dispose()", Log.INFO);
     print(Events.setStates.remove(stateFunction));
+    destroyAnimation();
     super.dispose();
   }
 
@@ -88,12 +107,11 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
             child: SleekCircularSlider(
               min: 0,
               max: widget.device.isStopped ? 21 : 360,
-              initialValue: widget.device.isStopped
-                  ? 0
-                  : 360 -
-                      ((widget.device.getRemainingTime().inSeconds /
-                              widget.device.getTotalDuration().inSeconds) *
-                          360),
+              initialValue: widget.device.isStopped ? 0 : progressDegrees,
+              // : 360 -
+              //     ((widget.device.getRemainingTime().inSeconds /
+              //             widget.device.getTotalDuration().inSeconds) *
+              //         360),
               appearance: CircularSliderAppearance(
                   animationEnabled: false,
                   startAngle: 270,
@@ -140,6 +158,8 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
                               widget.device.isStopped) {
                             writeLog("DevicePage::onTapStart()", Log.INFO);
                             widget.device.startTimer(() {}); //TODO
+                            runAnimation();
+                            radialProgressAnimationController?.forward();
                           }
                         },
                         child: Container(
@@ -188,6 +208,8 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
                           writeLog("DevicePage::onTapStop()", Log.INFO);
                           setState(() {
                             widget.device.stopTimer();
+                            radialProgressAnimationController?.stop();
+                            radialProgressAnimationController?.reset();
                           });
                         },
                         child: Container(
@@ -229,9 +251,13 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
                       GestureDetector(
                         onTap: () {
                           writeLog("DevicePage::onTapPlayPause()", Log.INFO);
-                          widget.device.isPaused
-                              ? widget.device.playTimer()
-                              : widget.device.pauseTimer();
+                          if (widget.device.isPaused) {
+                            widget.device.playTimer();
+                            radialProgressAnimationController?.forward();
+                          } else {
+                            widget.device.pauseTimer();
+                            radialProgressAnimationController?.stop();
+                          }
                         },
                         child: Container(
                           width: 100,
@@ -337,5 +363,29 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
       temp = 60;
     }
     return temp;
+  }
+
+  runAnimation({
+    double begin = 0.0,
+    double end = 360.0,
+  }) {
+    radialProgressAnimationController = AnimationController(
+        vsync: this,
+        duration:
+            Duration(seconds: widget.device.getRemainingTime().inSeconds));
+
+    progressAnimation = Tween(begin: begin, end: end).animate(
+      CurvedAnimation(
+          parent: radialProgressAnimationController!, curve: Curves.linear),
+    )..addListener(() {
+        setState(() {
+          progressDegrees = progressAnimation.value;
+        });
+      });
+  }
+
+  destroyAnimation() {
+    if (radialProgressAnimationController != null)
+      radialProgressAnimationController?.dispose();
   }
 }

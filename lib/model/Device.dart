@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:core';
 import 'dart:typed_data';
 
 import 'package:BubbleO/Events/TriggerFunctions.dart';
 import 'package:BubbleO/model/CustomBluetoothDevice.dart';
 import 'package:BubbleO/model/db_helper.dart';
+import 'package:BubbleO/ui/widgets.dart';
 import 'package:BubbleO/utils/Logger.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
@@ -53,6 +55,7 @@ class Device extends CustomBluetoothDevice {
 
   void onMessageReceived(Uint8List data) {
     print(data);
+    if (utf8.decode(data) == "m") motionDetectedPopUp(this);
     writeLog("Device::onMessageReceived() -> $data", Log.INFO);
   }
 
@@ -146,5 +149,10 @@ class Device extends CustomBluetoothDevice {
 
   Duration getElapsedTime() {
     return Duration(seconds: _elapsedSec);
+  }
+
+  void rename(String name) {
+    this.deviceName = name;
+    DataBaseHelper.updateDevice(this);
   }
 }

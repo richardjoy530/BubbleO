@@ -46,4 +46,11 @@ class DataBaseHelper {
         Log.INFO);
     return devices;
   }
+
+  static updateDevice(Device device) async =>
+      await _db!.update("Devices", {"deviceName": device.deviceName},
+          where: "id = \"${device.deviceId}\"");
+
+  static removeDevice(Device device) async =>
+      await _db!.delete("Devices", where: "id = \"${device.deviceId}\"");
 }

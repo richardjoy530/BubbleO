@@ -1,6 +1,7 @@
 import 'package:BubbleO/Events/TriggerFunctions.dart';
 import 'package:BubbleO/model/Device.dart';
 import 'package:BubbleO/ui/DevicePage.dart';
+import 'package:BubbleO/ui/widgets.dart';
 import 'package:BubbleO/utils/Logger.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,6 +35,7 @@ class _InfoPageState extends State<InfoPage>
 
   @override
   void initState() {
+    contextStack.add(this.context);
     writeLog("InfoPage::initState()", Log.INFO);
     stateFunction = () {
       setState(() {
@@ -46,6 +48,7 @@ class _InfoPageState extends State<InfoPage>
 
   @override
   void dispose() {
+    contextStack.remove(this.context);
     writeLog("InfoPage::dispose()", Log.INFO);
     print(Events.setStates.remove(stateFunction));
     super.dispose();

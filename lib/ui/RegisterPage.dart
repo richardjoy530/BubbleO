@@ -1,4 +1,5 @@
 import 'package:BubbleO/services/BluetoothService.dart';
+import 'package:BubbleO/ui/widgets.dart';
 import 'package:BubbleO/utils/Logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void initState() {
+    contextStack.add(this.context);
     writeLog(
         "RegisterPage::initState() fetching list of paired bluetooth devices",
         Log.INFO);
@@ -27,6 +29,12 @@ class _RegisterPageState extends State<RegisterPage> {
       });
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    contextStack.remove(this.context);
+    super.dispose();
   }
 
   @override
@@ -91,6 +99,13 @@ class _RegisterPageState extends State<RegisterPage> {
           Container(
             margin: EdgeInsets.only(bottom: 20, left: 14, right: 14),
             child: ListTile(
+              onTap: () {
+                BluetoothService.getPairedDevices().then((value) {
+                  setState(() {
+                    bluetoothDevices = value;
+                  });
+                });
+              },
               title: Text(
                 "Refresh list",
                 style: TextStyle(fontSize: 14),
