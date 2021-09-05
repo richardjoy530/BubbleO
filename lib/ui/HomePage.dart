@@ -1,6 +1,6 @@
 import 'package:BubbleO/Events/TriggerFunctions.dart';
 import 'package:BubbleO/model/Device.dart';
-import 'package:BubbleO/ui/DevicePage.dart';
+import 'package:BubbleO/ui/InfoPage.dart';
 import 'package:BubbleO/ui/RegisterPage.dart';
 import 'package:BubbleO/ui/widgets.dart';
 import 'package:BubbleO/utils/Logger.dart';
@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            DevicePage(devices[index])));
+                                            InfoPage(devices[index])));
                             });
                       })),
             ),

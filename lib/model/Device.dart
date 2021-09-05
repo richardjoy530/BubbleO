@@ -120,12 +120,12 @@ class Device extends CustomBluetoothDevice {
     writeLog("Device::pauseTimer() Exit", Log.INFO);
   }
 
-  void stopTimer() {
+  void stopTimer({bool send = true}) {
     writeLog("Device::stopTimer() Enter", Log.INFO);
     writeLog(
         "Device::stopTimer() Elapsed time is: ${Duration(seconds: _elapsedSec).toString().substring(0, 7)}",
         Log.INFO);
-    sendMessage("s");
+    if (send) sendMessage("s");
     isStopped = true;
     isPaused = false;
     _timer?.cancel();

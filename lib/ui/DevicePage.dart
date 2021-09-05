@@ -14,7 +14,7 @@ class DevicePage extends StatefulWidget {
   _DevicePageState createState() => _DevicePageState();
 }
 
-class _DevicePageState extends State<DevicePage> {
+class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
   StateFunction stateFunction = () {};
 
   @override
@@ -78,7 +78,7 @@ class _DevicePageState extends State<DevicePage> {
                     writeLog("DevicePage::onTapRestart()", Log.INFO);
                     widget.device.sendMessage("65");
                     setState(() {
-                      widget.device.stopTimer();
+                      widget.device.stopTimer(send: false);
                     });
                   },
                   icon: Icon(Icons.restart_alt_rounded))
@@ -101,9 +101,9 @@ class _DevicePageState extends State<DevicePage> {
                   customWidths: CustomSliderWidths(
                     handlerSize: 20,
                     trackWidth: 5,
-                    progressBarWidth: 20,
+                    progressBarWidth: 50,
                   ),
-                  size: (MediaQuery.of(context).size.width / 1.5) + 50,
+                  size: (MediaQuery.of(context).size.width / 1.5) + 90,
                   customColors: customColor),
               onChange: widget.device.isStopped
                   ? (double value) {
@@ -124,11 +124,6 @@ class _DevicePageState extends State<DevicePage> {
                           ':${getSeconds(widget.device.getRemainingTime().inSeconds)}',
                           style: TextStyle(fontSize: 40),
                         ),
-                  // child: Text(
-                  //   '${getMinuets(((widget.device.getRemainingTime().inSeconds)))}'
-                  //   ':${getSeconds(((widget.device.getRemainingTime().inSeconds)))}',
-                  //   style: TextStyle(fontSize: 40),
-                  // ),
                 );
               },
             ),
@@ -337,9 +332,9 @@ class _DevicePageState extends State<DevicePage> {
     } else if (value == 19) {
       temp = 55;
     } else if (value == 20) {
-      temp = 59;
+      temp = 60;
     } else if (value == 21) {
-      temp = 59;
+      temp = 60;
     }
     return temp;
   }
