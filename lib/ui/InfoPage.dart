@@ -110,10 +110,15 @@ class _InfoPageState extends State<InfoPage>
                           ),
                         ),
                       ),
-                      Icon(
-                        Icons.menu,
-                        size: 30,
-                        color: Color(0xff02457a),
+                      GestureDetector(
+                        onTap: () {
+                          options(widget.device);
+                        },
+                        child: Icon(
+                          Icons.menu,
+                          size: 30,
+                          color: Color(0xff02457a),
+                        ),
                       )
                     ],
                   ),
@@ -270,5 +275,48 @@ class _InfoPageState extends State<InfoPage>
             )),
       ),
     );
+  }
+
+  options(Device device) {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+        ),
+        builder: (context) {
+          return Wrap(
+            children: <Widget>[
+              Divider(
+                thickness: 2,
+                indent: MediaQuery.of(context).size.width / 4,
+                endIndent: MediaQuery.of(context).size.width / 4,
+              ),
+              Column(
+                children: [
+                  ListTile(
+                    leading: Icon(
+                      Icons.restart_alt_rounded,
+                    ),
+                    title: Text('Restart Device',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w300)),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      writeLog("InfoPage::onTapRestart()", Log.INFO);
+                      device.sendMessage("65");
+                      device.bluetoothConnection?.close();
+                      setState(() {
+                        device.stopTimer(send: false);
+                      });
+                      setState(() {});
+                    },
+                  )
+                ],
+              ),
+            ],
+          );
+        });
   }
 }

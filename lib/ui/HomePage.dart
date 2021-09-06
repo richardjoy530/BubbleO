@@ -164,7 +164,8 @@ class _HomePageState extends State<HomePage> {
                     title: Text('Delete Device',
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w300)),
-                    onTap: () {
+                    onTap: () async {
+                      await device.bluetoothConnection?.close();
                       setState(() {
                         devices.remove(device);
                         DataBaseHelper.removeDevice(device);

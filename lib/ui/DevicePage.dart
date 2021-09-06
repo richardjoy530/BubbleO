@@ -125,15 +125,17 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
                   customColors: customColor),
               onChange: widget.device.isStopped
                   ? (double value) {
-                      widget.device.setTimer(
-                          Duration(minutes: mapValues(value.floor())));
+                      widget.device.setTimer(Duration(
+                          minutes: mapValues(value.floor()) == 59
+                              ? 60
+                              : mapValues(value.floor())));
                     }
                   : null,
               innerWidget: (value) {
                 return Center(
                   child: widget.device.isStopped
                       ? Text(
-                          '${getSeconds(mapValues(value.floor()))}'
+                          '${mapValues(value.floor()) == 59 ? 60 : getSeconds(mapValues(value.floor()))}'
                           ':00',
                           style: TextStyle(fontSize: 40),
                         )
@@ -317,6 +319,7 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
 
   int mapValues(int value) {
     var temp = 0;
+    print(value);
     if (value == 0) {
       temp = 0;
     } else if (value == 1) {
@@ -358,7 +361,7 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
     } else if (value == 19) {
       temp = 55;
     } else if (value == 20) {
-      temp = 60;
+      temp = 59;
     } else if (value == 21) {
       temp = 60;
     }
