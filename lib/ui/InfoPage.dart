@@ -3,7 +3,6 @@ import 'package:BubbleO/model/Device.dart';
 import 'package:BubbleO/ui/DevicePage.dart';
 import 'package:BubbleO/ui/widgets.dart';
 import 'package:BubbleO/utils/Logger.dart';
-import 'package:badges/badges.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
@@ -60,54 +59,29 @@ class _InfoPageState extends State<InfoPage>
       child: Scaffold(
         backgroundColor: Color(0xFFF9FBFF),
         body: Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 20.0),
+            padding: const EdgeInsets.only(top: 24.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        height: 70,
-                        width: MediaQuery.of(context).size.width * 6.5 / 8,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey
-                                  .withOpacity(0.1), //color of shadow
-                              spreadRadius: 5, //spread radius
-                              blurRadius: 7, // blur radius
-                              offset: Offset(0, 2),
-                            )
-                          ],
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Icon(
+                          null,
+                          size: 30,
+                          color: Color(0xff02457a),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(14.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("Air Purification",
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      color: Color(0xff02457a),
-                                      // fontWeight: FontWeight.bold,
-                                    )),
-                              ),
-                              Container(
-                                width: 50,
-                                height: 50,
-                                child: RiveAnimation.asset(
-                                  'assets/spinner.riv',
-                                ),
-                              ),
-                            ],
-                          ),
+                      ),
+                      Text(
+                        widget.device.deviceName,
+                        style: TextStyle(
+                          fontSize: 30,
+                          color: Color(0xff02457a),
+                          // fontWeight: FontWeight.bold,
                         ),
                       ),
                       GestureDetector(
@@ -125,152 +99,205 @@ class _InfoPageState extends State<InfoPage>
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      DevicePage(widget.device)));
-                        },
-                        child: Container(
-                          height: 70,
-                          width: MediaQuery.of(context).size.width * 6.5 / 8,
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey
-                                    .withOpacity(0.1), //color of shadow
-                                spreadRadius: 5, //spread radius
-                                blurRadius: 7, // blur radius
-                                offset: Offset(0, 2),
-                              )
-                            ],
-                            color: Colors.white,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20.0)),
+                  child: Container(
+                    height: 70,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1), //color of shadow
+                          spreadRadius: 5, //spread radius
+                          blurRadius: 7, // blur radius
+                          offset: Offset(0, 2),
+                        )
+                      ],
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(14.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text("Air Purification",
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  color: Color(0xff02457a),
+                                  // fontWeight: FontWeight.bold,
+                                )),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(14.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text("Surface Disinfection",
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        color: Color(0xff02457a),
-                                        // fontWeight: FontWeight.bold,
-                                      )),
-                                ),
-                                Container(
-                                  width: 50,
-                                  height: 50,
-                                  child: Icon(
-                                    widget.device.isStopped
-                                        ? Icons.light_mode_outlined
-                                        : Icons.light_mode_rounded,
-                                    size: 30,
+                          Container(
+                            width: 50,
+                            height: 50,
+                            child: RiveAnimation.asset(
+                              'assets/spinner.riv',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DevicePage(widget.device)));
+                    },
+                    child: Container(
+                      height: 70,
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                Colors.grey.withOpacity(0.1), //color of shadow
+                            spreadRadius: 5, //spread radius
+                            blurRadius: 7, // blur radius
+                            offset: Offset(0, 2),
+                          )
+                        ],
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(14.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("Surface Disinfection",
+                                  style: TextStyle(
+                                    fontSize: 24,
                                     color: Color(0xff02457a),
-                                  ),
+                                    // fontWeight: FontWeight.bold,
+                                  )),
+                            ),
+                            Container(
+                              width: 50,
+                              height: 50,
+                              child: Icon(
+                                widget.device.isStopped
+                                    ? Icons.light_mode_outlined
+                                    : Icons.light_mode_rounded,
+                                size: 30,
+                                color: Color(0xff02457a),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xfff6fdff),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0)),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ListTile(
+                          leading: Icon(
+                            Icons.warning_amber_rounded,
+                            color: Colors.orange[500],
+                            size: 40,
+                          ),
+                          title: Text(
+                            "Exposure to UVC radiation causes eyes & skin irritation",
+                            style: TextStyle(
+                                fontSize: 18, color: Color(0xff02457a)),
+                          ),
+                        ),
+                        ListTile(
+                            leading: Icon(
+                              Icons.menu_rounded,
+                              color: Color(0xff02457a),
+                              size: 30,
+                            ),
+                            title: Text(
+                              "Replace HEPA filters every 3-6 months",
+                              style: TextStyle(
+                                  fontSize: 18, color: Color(0xff02457a)),
+                            )),
+                        ListTile(
+                            leading: Icon(
+                              Icons.menu_rounded,
+                              color: Color(0xff02457a),
+                              size: 30,
+                            ),
+                            title: Text(
+                              "Outer UVC lifespan - 9000Hrs",
+                              style: TextStyle(
+                                  fontSize: 18, color: Color(0xff02457a)),
+                            )),
+                        ListTile(
+                            leading: Icon(
+                              Icons.menu_rounded,
+                              color: Color(0xff02457a),
+                              size: 30,
+                            ),
+                            title: Text(
+                              "Outer UVC lifespan - 8000Hrs",
+                              style: TextStyle(
+                                  fontSize: 18, color: Color(0xff02457a)),
+                            )),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(
+                              children: [
+                                Icon(
+                                  Icons.lightbulb_outline_rounded,
+                                  size: 50,
+                                  color: Colors.green,
                                 ),
+                                Text("Good",
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.green[800]))
                               ],
                             ),
-                          ),
-                        ),
-                      ),
-                      Badge(
-                        toAnimate: false,
-                        showBadge: false,
-                        position: BadgePosition.topStart(),
-                        badgeColor: Colors.red,
-                        borderRadius: BorderRadius.circular(8),
-                        badgeContent: Text("1"),
-                        child: Icon(
-                          Icons.notifications_none_rounded,
-                          size: 30,
-                          color: Color(0xff02457a),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SleekCircularSlider(
-                        initialValue: 80,
-                        appearance: CircularSliderAppearance(
-                            size: 170,
-                            customWidths: CustomSliderWidths(
-                              handlerSize: 0,
-                              trackWidth: 2,
+                            Column(
+                              children: [
+                                Icon(
+                                  Icons.lightbulb_outline_rounded,
+                                  size: 50,
+                                  color: Colors.orange,
+                                ),
+                                Text("Moderate",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.orange[800]))
+                              ],
                             ),
-                            customColors: customColor),
-                      ),
-                      Text("Hepa Filter",
-                          style: TextStyle(
-                            fontSize: 24,
-                            color: Color(0xff02457a),
-                            // fontWeight: FontWeight.bold,
-                          )),
-                    ],
+                            Column(
+                              children: [
+                                Icon(
+                                  Icons.lightbulb_outline_rounded,
+                                  size: 50,
+                                  color: Colors.red,
+                                ),
+                                Text(
+                                  "Unhealthy",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.red[800]),
+                                )
+                              ],
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Purifier UVC",
-                          style: TextStyle(
-                            fontSize: 24,
-                            color: Color(0xff02457a),
-                            // fontWeight: FontWeight.bold,
-                          )),
-                      SleekCircularSlider(
-                        initialValue: 90,
-                        appearance: CircularSliderAppearance(
-                            size: 170,
-                            customWidths: CustomSliderWidths(
-                              handlerSize: 0,
-                              trackWidth: 2,
-                            ),
-                            customColors: customColor),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SleekCircularSlider(
-                        initialValue: 95,
-                        appearance: CircularSliderAppearance(
-                            size: 170,
-                            customWidths: CustomSliderWidths(
-                              handlerSize: 0,
-                              trackWidth: 2,
-                            ),
-                            customColors: customColor),
-                      ),
-                      Text("Disinfection UVC",
-                          style: TextStyle(
-                            fontSize: 24,
-                            color: Color(0xff02457a),
-                            // fontWeight: FontWeight.bold,
-                          )),
-                    ],
-                  ),
-                ),
+                )
               ],
             )),
       ),
@@ -295,23 +322,56 @@ class _InfoPageState extends State<InfoPage>
               ),
               Column(
                 children: [
-                  ListTile(
-                    leading: Icon(
-                      Icons.restart_alt_rounded,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                      ),
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.restart_alt_rounded,
+                          color: Color(0xff00477d),
+                        ),
+                        title: Text('Restart Device',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w300)),
+                        onTap: () async {
+                          writeLog("InfoPage::onTapRestart()", Log.INFO);
+                          device.sendMessage("65");
+                          device.bluetoothConnection?.close();
+                          setState(() {
+                            device.stopTimer(send: false);
+                          });
+                          Navigator.pop(context);
+                        },
+                      ),
                     ),
-                    title: Text('Restart Device',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w300)),
-                    onTap: () async {
-                      Navigator.pop(context);
-                      writeLog("InfoPage::onTapRestart()", Log.INFO);
-                      device.sendMessage("65");
-                      device.bluetoothConnection?.close();
-                      setState(() {
-                        device.stopTimer(send: false);
-                      });
-                      setState(() {});
-                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8.0, 8, 8, 16),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.red[200],
+                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                      ),
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.stop_circle_outlined,
+                          color: Colors.red,
+                        ),
+                        title: Text('Emergency Stop',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w300)),
+                        onTap: () async {
+                          writeLog("InfoPage::onTapEmergencyStop()", Log.INFO);
+                          setState(() {
+                            device.stopTimer();
+                          });
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
                   )
                 ],
               ),

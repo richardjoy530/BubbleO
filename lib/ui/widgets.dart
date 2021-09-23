@@ -60,7 +60,7 @@ motionDetectedPopUp(Device device) async {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Icon(Icons.dangerous),
+                child: Icon(Icons.warning_rounded, color: Colors.redAccent),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -75,7 +75,7 @@ motionDetectedPopUp(Device device) async {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  color: Color(0xff060606),
+                  color: Color(0xff02457a),
                   child: Text(
                     "Ok",
                     style: TextStyle(color: Colors.white),

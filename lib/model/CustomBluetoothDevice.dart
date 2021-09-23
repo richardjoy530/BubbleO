@@ -56,8 +56,8 @@ abstract class CustomBluetoothDevice {
         });
 
       print("connected to ${bluetoothDevice.name}");
-      sendMessage("7");
-      sendMessage("0");
+      // sendMessage("7");
+      // sendMessage("0");
     }).onError((error, stackTrace) {
       writeLog(
           "CustomBluetoothDevice::establishConnection().onError Error: Failed to connect",

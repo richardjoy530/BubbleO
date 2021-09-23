@@ -1,10 +1,14 @@
+import 'dart:math';
+
 import 'package:BubbleO/Events/TriggerFunctions.dart';
 import 'package:BubbleO/model/Device.dart';
 import 'package:BubbleO/ui/widgets.dart';
 import 'package:BubbleO/utils/Logger.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class DevicePage extends StatefulWidget {
   final Device device;
@@ -20,6 +24,7 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
   AnimationController? radialProgressAnimationController;
   late Animation<double> progressAnimation;
   double progressDegrees = 0;
+  String statusText = "Disinfecting";
 
   @override
   void initState() {
@@ -43,6 +48,7 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
         radialProgressAnimationController?.forward();
       }
     }
+    updateStatus();
     super.initState();
   }
 
@@ -53,6 +59,17 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
     print(Events.setStates.remove(stateFunction));
     destroyAnimation();
     super.dispose();
+  }
+
+  void updateStatus() {
+    setState(() {
+      if (widget.device.isStopped)
+        statusText = "Ready to Disinfect";
+      else if (widget.device.isPaused)
+        statusText = "Paused";
+      else
+        statusText = "Disinfecting";
+    });
   }
 
   final customColor = CustomSliderColors(
@@ -83,6 +100,7 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
                   onPressed: () {},
                   icon: Icon(
                     Icons.bluetooth_connected,
+                    color: Color(0xff00477d),
                   )),
               Text(
                 widget.device.deviceName,
@@ -92,60 +110,124 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
                   // fontWeight: FontWeight.bold,
                 ),
               ),
-              IconButton(
-                  onPressed: () {
-                    writeLog("DevicePage::onTapRestart()", Log.INFO);
-                    widget.device.sendMessage("65");
-                    setState(() {
-                      widget.device.stopTimer(send: false);
-                    });
-                  },
-                  icon: Icon(Icons.restart_alt_rounded))
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: 30,
+                  width: 30,
+                  child: FlareActor(
+                    'assets/status.flr',
+                    animation: widget.device.isStopped == true &&
+                            widget.device.isStopped == false
+                        ? 'Connected'
+                        : 'off',
+                  ),
+                ),
+              ),
             ],
           ),
-          Container(
-            child: SleekCircularSlider(
-              min: 0,
-              max: widget.device.isStopped ? 21 : 360,
-              initialValue: widget.device.isStopped ? 0 : progressDegrees,
-              // : 360 -
-              //     ((widget.device.getRemainingTime().inSeconds /
-              //             widget.device.getTotalDuration().inSeconds) *
-              //         360),
-              appearance: CircularSliderAppearance(
-                  animationEnabled: false,
-                  startAngle: 270,
-                  angleRange: 360,
-                  customWidths: CustomSliderWidths(
-                    handlerSize: 20,
-                    trackWidth: 5,
-                    progressBarWidth: 50,
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  FlareActor(
+                    'assets/breathing.flr',
+                    animation:
+                        !widget.device.isStopped && !widget.device.isPaused
+                            ? 'off'
+                            : 'breath',
                   ),
-                  size: (MediaQuery.of(context).size.width / 1.5) + 90,
-                  customColors: customColor),
-              onChange: widget.device.isStopped
-                  ? (double value) {
-                      widget.device.setTimer(Duration(
-                          minutes: mapValues(value.floor()) == 59
-                              ? 60
-                              : mapValues(value.floor())));
-                    }
-                  : null,
-              innerWidget: (value) {
-                return Center(
-                  child: widget.device.isStopped
-                      ? Text(
-                          '${mapValues(value.floor()) == 59 ? 60 : getSeconds(mapValues(value.floor()))}'
-                          ':00',
-                          style: TextStyle(fontSize: 40),
-                        )
-                      : Text(
-                          '${getMinuets(widget.device.getRemainingTime().inSeconds)}'
-                          ':${getSeconds(widget.device.getRemainingTime().inSeconds)}',
-                          style: TextStyle(fontSize: 40),
+                  Container(
+                      height: min(MediaQuery.of(context).size.height / 1.5,
+                          MediaQuery.of(context).size.width / 1.5),
+                      width: min(MediaQuery.of(context).size.height / 1.5,
+                          MediaQuery.of(context).size.width / 1.5),
+                      child: Center(
+                        child: Container(
+                          height:
+                              (MediaQuery.of(context).size.width / 1.5) - 50,
+                          width: (MediaQuery.of(context).size.width / 1.5) - 50,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.white),
                         ),
-                );
-              },
+                      )),
+                  SleekCircularSlider(
+                    min: 0,
+                    max: widget.device.isStopped ? 21 : 360,
+                    initialValue:
+                        widget.device.isStopped ? 0 : 360 - progressDegrees,
+                    // : 360 -
+                    //     ((widget.device.getRemainingTime().inSeconds /
+                    //             widget.device.getTotalDuration().inSeconds) *
+                    //         360),
+                    appearance: CircularSliderAppearance(
+                        animationEnabled: false,
+                        startAngle: 270,
+                        angleRange: 360,
+                        customWidths: CustomSliderWidths(
+                          handlerSize: widget.device.isStopped ? 20 : 0,
+                          trackWidth: 5,
+                          progressBarWidth: 20,
+                        ),
+                        size: (MediaQuery.of(context).size.width / 1.5) + 50,
+                        customColors: customColor),
+                    onChange: widget.device.isStopped
+                        ? (double value) {
+                            widget.device.setTimer(Duration(
+                                minutes: mapValues(value.floor()) == 59
+                                    ? 60
+                                    : mapValues(value.floor())));
+                          }
+                        : null,
+                    innerWidget: (value) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                statusText,
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.black),
+                              ),
+                            ),
+                            Visibility(
+                              visible: !widget.device.isStopped &&
+                                  !widget.device.isPaused,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: AnimatedSmoothIndicator(
+                                  activeIndex: ((progressDegrees / 3) % 3).isNaN
+                                      ? 1
+                                      : ((progressDegrees / 3) % 3).floor(),
+                                  count: 3,
+                                  effect: SlideEffect(
+                                      dotColor: Color(0xffb8d3e8),
+                                      activeDotColor: Color(0xff02457a)),
+                                ),
+                              ),
+                            ),
+                            widget.device.isStopped
+                                ? Text(
+                                    '${mapValues(value.floor()) == 59 ? 60 : getSeconds(mapValues(value.floor()))}'
+                                    ':00',
+                                    style: TextStyle(fontSize: 40),
+                                  )
+                                : Text(
+                                    '${getMinuets(widget.device.getRemainingTime().inSeconds)}'
+                                    ':${getSeconds(widget.device.getRemainingTime().inSeconds)}',
+                                    style: TextStyle(fontSize: 40),
+                                  ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
           Container(
@@ -162,6 +244,7 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
                             widget.device.startTimer(() {}); //TODO
                             runAnimation();
                             radialProgressAnimationController?.forward();
+                            updateStatus();
                           }
                         },
                         child: Container(
@@ -213,6 +296,7 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
                             radialProgressAnimationController?.stop();
                             radialProgressAnimationController?.reset();
                           });
+                          updateStatus();
                         },
                         child: Container(
                           width: 100,
@@ -260,6 +344,7 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
                             widget.device.pauseTimer();
                             radialProgressAnimationController?.stop();
                           }
+                          updateStatus();
                         },
                         child: Container(
                           width: 100,
