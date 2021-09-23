@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:BubbleO/utils/Logger.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 abstract class CustomBluetoothDevice {
   late BluetoothDevice bluetoothDevice;
@@ -63,8 +62,8 @@ abstract class CustomBluetoothDevice {
           "CustomBluetoothDevice::establishConnection().onError Error: Failed to connect",
           Log.ERROR);
 
-      Fluttertoast.showToast(
-          msg: "Couldn't connect to: ${bluetoothDevice.name}");
+      // Fluttertoast.showToast(
+      //     msg: "Couldn't connect to: ${bluetoothDevice.name}");
     }).whenComplete(() {
       writeLog("CustomBluetoothDevice::establishConnection()->whenComplete() ",
           Log.WARN);
