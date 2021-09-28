@@ -36,10 +36,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     contextStack.remove(this.context);
-    devices.forEach((device) {
-      device.bluetoothConnection?.close();
-      device.bluetoothConnection?.dispose();
-    });
+    // devices.forEach((device) {
+    //   device.bluetoothConnection?.close();
+    //   device.bluetoothConnection?.dispose();
+    // });
     writeLog("HomePage::dispose()", Log.INFO);
     writeLog("----- Logger stopped -----", Log.INFO);
     stopLogger();
@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 30, bottom: 30, left: 30, right: 30),
+            margin: EdgeInsets.only(top: 30, bottom: 30, left: 50, right: 50),
             child: ListTile(
               title: Image.asset(
                 'assets/logo.png',
@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.all(8.0),
               child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Color(0xffeff3f5),
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30.0),
                         topRight: Radius.circular(30.0)),
@@ -92,6 +92,7 @@ class _HomePageState extends State<HomePage> {
                               subTitle: devices[index].isStopped
                                   ? null
                                   : LinearPercentIndicator(
+                                      backgroundColor: Color(0xffd6e7ee),
                                       lineHeight: 5.0,
                                       percent: devices[index]
                                               .getRemainingTime()
@@ -99,11 +100,18 @@ class _HomePageState extends State<HomePage> {
                                           devices[index]
                                               .getTotalDuration()
                                               .inSeconds,
-                                      progressColor: Colors.black,
+                                      progressColor: Color(0xff00477d),
                                     ),
                               color: color,
-                              leadingIcon: Icons.wifi_tethering_rounded,
-                              trailing: Icon(Icons.arrow_forward_ios_rounded),
+                              leadingIcon: devices[index].bluetoothConnection !=
+                                          null &&
+                                      devices[index].bluetoothDevice.isBonded
+                                  ? Icons.bluetooth_connected_rounded
+                                  : Icons.bluetooth_rounded,
+                              trailing: Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                color: Color(0xff00477d),
+                              ),
                               onLongPress: () {
                                 options(devices[index]);
                               },
@@ -127,6 +135,7 @@ class _HomePageState extends State<HomePage> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 DevicePage(devices[index])));
+                                  setState(() {});
                                 }
                               }),
                         );

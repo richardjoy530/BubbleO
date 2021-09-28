@@ -143,7 +143,7 @@ class _InfoPageState extends State<InfoPage>
                   padding: const EdgeInsets.all(10.0),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => DevicePage(widget.device)));
@@ -195,106 +195,114 @@ class _InfoPageState extends State<InfoPage>
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xfff6fdff),
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20.0),
-                          topRight: Radius.circular(20.0)),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ListTile(
-                          leading: Icon(
-                            Icons.warning_amber_rounded,
-                            color: Colors.orange[500],
-                            size: 40,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Color(0xff99cadc),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(20.0))),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Center(
+                            child: Text("Important",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Color(0xff02457a))),
                           ),
-                          title: Text(
-                            "Exposure to UVC radiation causes eyes & skin irritation",
-                            style: TextStyle(
-                                fontSize: 18, color: Color(0xff02457a)),
+                          ListTile(
+                            leading: Icon(
+                              Icons.warning_amber_rounded,
+                              color: Colors.orange[500],
+                              size: 40,
+                            ),
+                            title: Text(
+                              "Exposure to UVC radiation causes eyes & skin irritation",
+                              style: TextStyle(
+                                  fontSize: 18, color: Color(0xff02457a)),
+                            ),
                           ),
-                        ),
-                        ListTile(
-                            leading: Icon(
-                              Icons.menu_rounded,
-                              color: Color(0xff02457a),
-                              size: 30,
-                            ),
-                            title: Text(
-                              "Replace HEPA filters every 3-6 months",
-                              style: TextStyle(
-                                  fontSize: 18, color: Color(0xff02457a)),
-                            )),
-                        ListTile(
-                            leading: Icon(
-                              Icons.menu_rounded,
-                              color: Color(0xff02457a),
-                              size: 30,
-                            ),
-                            title: Text(
-                              "Outer UVC lifespan - 9000Hrs",
-                              style: TextStyle(
-                                  fontSize: 18, color: Color(0xff02457a)),
-                            )),
-                        ListTile(
-                            leading: Icon(
-                              Icons.menu_rounded,
-                              color: Color(0xff02457a),
-                              size: 30,
-                            ),
-                            title: Text(
-                              "Outer UVC lifespan - 8000Hrs",
-                              style: TextStyle(
-                                  fontSize: 18, color: Color(0xff02457a)),
-                            )),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Column(
-                              children: [
-                                Icon(
-                                  Icons.lightbulb_outline_rounded,
-                                  size: 50,
-                                  color: Colors.green,
-                                ),
-                                Text("Good",
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.green[800]))
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Icon(
-                                  Icons.lightbulb_outline_rounded,
-                                  size: 50,
-                                  color: Colors.orange,
-                                ),
-                                Text("Moderate",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.orange[800]))
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Icon(
-                                  Icons.lightbulb_outline_rounded,
-                                  size: 50,
-                                  color: Colors.red,
-                                ),
-                                Text(
-                                  "Unhealthy",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.red[800]),
-                                )
-                              ],
-                            )
-                          ],
-                        )
-                      ],
+                          ListTile(
+                              leading: Icon(
+                                Icons.menu_rounded,
+                                color: Color(0xff02457a),
+                                size: 30,
+                              ),
+                              title: Text(
+                                "Replace Hepa filter every 3-6 months",
+                                style: TextStyle(
+                                    fontSize: 18, color: Color(0xff02457a)),
+                              )),
+                          ListTile(
+                              leading: Icon(
+                                Icons.menu_rounded,
+                                color: Color(0xff02457a),
+                                size: 30,
+                              ),
+                              title: Text(
+                                "Inner UVC tube lifespan - 9000Hrs",
+                                style: TextStyle(
+                                    fontSize: 18, color: Color(0xff02457a)),
+                              )),
+                          ListTile(
+                              leading: Icon(
+                                Icons.menu_rounded,
+                                color: Color(0xff02457a),
+                                size: 30,
+                              ),
+                              title: Text(
+                                "Outer UVC tubes lifespan - 9000Hrs",
+                                style: TextStyle(
+                                    fontSize: 18, color: Color(0xff02457a)),
+                              )),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          //   children: [
+                          //     Column(
+                          //       children: [
+                          //         Icon(
+                          //           Icons.lightbulb_outline_rounded,
+                          //           size: 50,
+                          //           color: Colors.green,
+                          //         ),
+                          //         Text("Good",
+                          //             style: TextStyle(
+                          //                 fontSize: 16, color: Colors.green[800]))
+                          //       ],
+                          //     ),
+                          //     Column(
+                          //       children: [
+                          //         Icon(
+                          //           Icons.lightbulb_outline_rounded,
+                          //           size: 50,
+                          //           color: Colors.orange,
+                          //         ),
+                          //         Text("Moderate",
+                          //             style: TextStyle(
+                          //                 fontSize: 16,
+                          //                 color: Colors.orange[800]))
+                          //       ],
+                          //     ),
+                          //     Column(
+                          //       children: [
+                          //         Icon(
+                          //           Icons.lightbulb_outline_rounded,
+                          //           size: 50,
+                          //           color: Colors.red,
+                          //         ),
+                          //         Text(
+                          //           "Unhealthy",
+                          //           style: TextStyle(
+                          //               fontSize: 16, color: Colors.red[800]),
+                          //         )
+                          //       ],
+                          //     )
+                          //   ],
+                          // )
+                        ],
+                      ),
                     ),
                   ),
                 )
@@ -339,7 +347,6 @@ class _InfoPageState extends State<InfoPage>
                         onTap: () async {
                           writeLog("InfoPage::onTapRestart()", Log.INFO);
                           device.sendMessage("65");
-                          device.bluetoothConnection?.close();
                           setState(() {
                             device.stopTimer(send: false);
                           });

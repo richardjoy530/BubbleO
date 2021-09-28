@@ -21,56 +21,64 @@ abstract class CustomBluetoothDevice {
   // }
 
   Future<bool> establishConnection(void callback(Uint8List data)) async {
-    writeLog("CustomBluetoothDevice::establishConnection() Enter", Log.INFO);
-    if (bluetoothConnection != null && bluetoothConnection!.isConnected) {
-      writeLog("CustomBluetoothDevice::establishConnection() Already Connected",
-          Log.INFO);
-      print("Already Connected");
-      return true;
-    }
+    try {
+      writeLog("CustomBluetoothDevice::establishConnection() Enter", Log.INFO);
+      if (bluetoothConnection != null && bluetoothConnection!.isConnected) {
+        writeLog(
+            "CustomBluetoothDevice::establishConnection() Already Connected",
+            Log.INFO);
+        print("Already Connected");
+        return true;
+      }
 
-    var connected = false;
-    await BluetoothConnection.toAddress(bluetoothAddress).then((_connection) {
+      var connected = false;
+      await BluetoothConnection.toAddress(bluetoothAddress).then((_connection) {
+        writeLog(
+            "CustomBluetoothDevice::establishConnection() serial connection established to $bluetoothAddress:${bluetoothDevice.name}",
+            Log.INFO);
+
+        bluetoothConnection = _connection;
+        connected = true;
+
+        writeLog(
+            "CustomBluetoothDevice::establishConnection() listening  for messages started...",
+            Log.INFO);
+
+        bluetoothConnection!.input!
+          ..handleError((error) {
+            writeLog(
+                "CustomBluetoothDevice::establishConnection()..handleError()",
+                Log.ERROR);
+          })
+          ..listen(callback).onError((error) {
+            writeLog(
+                "CustomBluetoothDevice::establishConnection()..listen().onError()",
+                Log.ERROR);
+          });
+
+        print("connected to ${bluetoothDevice.name}");
+        // sendMessage("7");
+        // sendMessage("0");
+      }).onError((error, stackTrace) {
+        writeLog(
+            "CustomBluetoothDevice::establishConnection().onError Error: Failed to connect",
+            Log.ERROR);
+
+        // Fluttertoast.showToast(
+        //     msg: "Couldn't connect to: ${bluetoothDevice.name}");
+      }).whenComplete(() {
+        writeLog(
+            "CustomBluetoothDevice::establishConnection()->whenComplete() ",
+            Log.WARN);
+      });
+      writeLog("CustomBluetoothDevice::establishConnection() Exit", Log.INFO);
+      return connected;
+    } catch (e) {
       writeLog(
-          "CustomBluetoothDevice::establishConnection() serial connection established to $bluetoothAddress:${bluetoothDevice.name}",
-          Log.INFO);
-
-      bluetoothConnection = _connection;
-      connected = true;
-
-      writeLog(
-          "CustomBluetoothDevice::establishConnection() listening  for messages started...",
-          Log.INFO);
-
-      bluetoothConnection!.input!
-        ..handleError((error) {
-          writeLog(
-              "CustomBluetoothDevice::establishConnection()..handleError()",
-              Log.ERROR);
-        })
-        ..listen(callback).onError((error) {
-          writeLog(
-              "CustomBluetoothDevice::establishConnection()..listen().onError()",
-              Log.ERROR);
-        });
-
-      print("connected to ${bluetoothDevice.name}");
-      // sendMessage("7");
-      // sendMessage("0");
-    }).onError((error, stackTrace) {
-      writeLog(
-          "CustomBluetoothDevice::establishConnection().onError Error: Failed to connect",
+          "CustomBluetoothDevice::establishConnection() Error: Failed to connect",
           Log.ERROR);
-
-      // Fluttertoast.showToast(
-      //     msg: "Couldn't connect to: ${bluetoothDevice.name}");
-    }).whenComplete(() {
-      writeLog("CustomBluetoothDevice::establishConnection()->whenComplete() ",
-          Log.WARN);
-    });
-
-    writeLog("CustomBluetoothDevice::establishConnection() Exit", Log.INFO);
-    return connected;
+    }
+    return false;
   }
 
   bool isConnected() {

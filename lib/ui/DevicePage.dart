@@ -24,7 +24,6 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
   AnimationController? radialProgressAnimationController;
   late Animation<double> progressAnimation;
   double progressDegrees = 0;
-  String statusText = "Disinfecting";
 
   @override
   void initState() {
@@ -64,11 +63,11 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
   void updateStatus() {
     setState(() {
       if (widget.device.isStopped)
-        statusText = "Ready to Disinfect";
+        widget.device.statusText = "Ready to Disinfect";
       else if (widget.device.isPaused)
-        statusText = "Paused";
+        widget.device.statusText = "Paused";
       else
-        statusText = "Disinfecting";
+        widget.device.statusText = "Disinfecting";
     });
   }
 
@@ -99,7 +98,10 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
               IconButton(
                   onPressed: () {},
                   icon: Icon(
-                    Icons.bluetooth_connected,
+                    widget.device.bluetoothConnection != null &&
+                            widget.device.bluetoothDevice.isBonded
+                        ? Icons.bluetooth_connected_rounded
+                        : Icons.bluetooth_rounded,
                     color: Color(0xff00477d),
                   )),
               Text(
@@ -189,7 +191,7 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                statusText,
+                                widget.device.statusText,
                                 style: TextStyle(
                                     fontSize: 20, color: Colors.black),
                               ),
@@ -296,7 +298,9 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
                             radialProgressAnimationController?.stop();
                             radialProgressAnimationController?.reset();
                           });
-                          updateStatus();
+                          setState(() {
+                            updateStatus();
+                          });
                         },
                         child: Container(
                           width: 100,
@@ -468,6 +472,12 @@ class _DevicePageState extends State<DevicePage> with TickerProviderStateMixin {
     )..addListener(() {
         setState(() {
           progressDegrees = progressAnimation.value;
+          if (progressAnimation.isCompleted) {
+            setState(() {
+              widget.device.stopTimer(send: false);
+              updateStatus();
+            });
+          }
         });
       });
   }

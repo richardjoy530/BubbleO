@@ -20,6 +20,7 @@ class Device extends CustomBluetoothDevice {
   bool isStopped = true;
   bool isPaused = false;
   Timer? _timer;
+  String statusText = "Disinfecting";
 
   Duration mainDuration = Duration();
 

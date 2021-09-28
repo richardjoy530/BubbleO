@@ -7,11 +7,12 @@ class BluetoothService {
 
   static scan() async {
     writeLog("BluetoothService::scan() Enter", Log.INFO);
-    bluetooth.isEnabled.then((value) {
+    bluetooth.isEnabled.then((value) async {
       if (value == false) {
         writeLog("BluetoothService::scan() requesting to enable bluetooth",
             Log.INFO);
         bluetooth.requestEnable();
+        await Future.delayed(Duration(seconds: 1));
       }
     });
     List<BluetoothDevice> bluetoothDevices = await bluetooth.getBondedDevices();

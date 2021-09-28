@@ -35,8 +35,8 @@ stopLogger() async {
 }
 
 void writeLog(String msg, String level) {
-  logQueue.add(DateTime.now().toString().substring(0, 19) + level + msg + "\n");
-  // print(DateTime.now().toString().substring(0, 19) + level + msg + "\n");
+  // logQueue.add(DateTime.now().toString().substring(0, 19) + level + msg + "\n");
+  print(DateTime.now().toString().substring(0, 19) + level + msg + "\n");
 }
 
 class Log {

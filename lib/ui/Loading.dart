@@ -26,7 +26,10 @@ class _LoadingState extends State<Loading> {
         body: Center(
           child: Container(
             width: 50,
-            child: Image.asset('images/icon.png'),
+            child: Image.asset(
+              'images/icon.png',
+              color: Color(0xff97cadb),
+            ),
           ),
         ),
       ),
@@ -34,8 +37,8 @@ class _LoadingState extends State<Loading> {
   }
 
   load() async {
-    await initialiseLogger();
-    startLogger();
+    // await initialiseLogger();
+    // startLogger();
     writeLog("LoadingPage::load() Enter", Log.INFO);
     await DataBaseHelper.initializeDatabase();
     devices = await DataBaseHelper.getAllDevices();

@@ -24,7 +24,7 @@ Widget genericTile(
         onLongPress: onLongPress,
         leading: Icon(
           leadingIcon,
-          color: Colors.black,
+          color: Color(0xff00477d),
         ),
         title: Text(text),
         subtitle: subTitle != null ? subTitle : null,
@@ -41,6 +41,7 @@ Widget genericTile(
 
 motionDetectedPopUp(Device device) async {
   device.stopTimer(send: false);
+  device.statusText = "Ready to Disinfect";
   await showDialog(
     barrierDismissible: false,
     context: context,
@@ -141,7 +142,7 @@ renameDevicePopUp(Device device) async {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  color: Color(0xff060606),
+                  color: Color(0xff00477d),
                   child: Text(
                     "Save",
                     style: TextStyle(color: Colors.white),
