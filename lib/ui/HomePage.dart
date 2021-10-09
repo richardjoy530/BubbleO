@@ -36,10 +36,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     contextStack.remove(this.context);
-    // devices.forEach((device) {
-    //   device.bluetoothConnection?.close();
-    //   device.bluetoothConnection?.dispose();
-    // });
+    devices.forEach((device) {
+      device.bluetoothConnection?.close();
+      device.bluetoothConnection?.dispose();
+    });
     writeLog("HomePage::dispose()", Log.INFO);
     writeLog("----- Logger stopped -----", Log.INFO);
     stopLogger();
@@ -48,116 +48,146 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: SafeArea(
         child: Scaffold(
-      backgroundColor: Color(0xFFF9FBFF),
-      body: Column(
-        children: [
-          Container(
-            margin: EdgeInsets.only(top: 30, bottom: 30, left: 50, right: 50),
-            child: ListTile(
-              title: Image.asset(
-                'assets/logo.png',
-                color: Color(0xff00477d),
+          backgroundColor: Color(0xFFF9FBFF),
+          body: Column(
+            children: [
+              Container(
+                margin:
+                    EdgeInsets.only(top: 30, bottom: 30, left: 50, right: 50),
+                child: ListTile(
+                  title: Image.asset(
+                    'assets/logo.png',
+                    color: Color(0xff00477d),
+                  ),
+                ),
               ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: Color(0xffeff3f5),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30.0),
+                            topRight: Radius.circular(30.0)),
+                      ),
+                      child: ListView.builder(
+                          itemCount: devices.length,
+                          itemBuilder: (context, index) {
+                            Color color = Colors.white;
+                            return Listener(
+                              onPointerDown: (event) {
+                                setState(() {
+                                  color = Colors.blueAccent;
+                                });
+                              },
+                              onPointerUp: (event) {
+                                setState(() {
+                                  color = Colors.white;
+                                });
+                              },
+                              child: genericTile(
+                                  text: devices[index].deviceName,
+                                  subTitle: devices[index].isStopped
+                                      ? null
+                                      : LinearPercentIndicator(
+                                          backgroundColor: Color(0xffd6e7ee),
+                                          lineHeight: 5.0,
+                                          percent: devices[index]
+                                                  .getRemainingTime()
+                                                  .inSeconds /
+                                              devices[index]
+                                                  .getTotalDuration()
+                                                  .inSeconds,
+                                          progressColor: Color(0xff00477d),
+                                        ),
+                                  color: color,
+                                  leadingIcon:
+                                      devices[index].bluetoothConnection !=
+                                                  null &&
+                                              devices[index]
+                                                  .bluetoothDevice
+                                                  .isBonded
+                                          ? Icons.bluetooth_connected_rounded
+                                          : Icons.bluetooth_rounded,
+                                  trailing: Icon(
+                                    Icons.arrow_forward_ios_rounded,
+                                    color: Color(0xff00477d),
+                                  ),
+                                  onLongPress: () {
+                                    options(devices[index]);
+                                  },
+                                  onTap: () async {
+                                    writeLog("HomePage::onTap() DeviceTile",
+                                        Log.INFO);
+                                    var result = await devices[index].connect();
+                                    writeLog(
+                                        "HomePage::onTap() ${devices[index].deviceName} connection status: $result",
+                                        Log.INFO);
+                                    if (result) {
+                                      if (devices[index].isStopped)
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    InfoPage(devices[index])));
+                                      else
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DevicePage(
+                                                        devices[index])));
+                                      setState(() {});
+                                    }
+                                  }),
+                            );
+                          })),
+                ),
+              )
+            ],
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            backgroundColor: Color(0xff00477d),
+            onPressed: () {
+              addDevice();
+            },
+            label: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(Icons.add),
+                Text("Add Device"),
+              ],
             ),
           ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xffeff3f5),
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.0),
-                        topRight: Radius.circular(30.0)),
-                  ),
-                  child: ListView.builder(
-                      itemCount: devices.length,
-                      itemBuilder: (context, index) {
-                        Color color = Colors.white;
-                        return Listener(
-                          onPointerDown: (event) {
-                            setState(() {
-                              color = Colors.blueAccent;
-                            });
-                          },
-                          onPointerUp: (event) {
-                            setState(() {
-                              color = Colors.white;
-                            });
-                          },
-                          child: genericTile(
-                              text: devices[index].deviceName,
-                              subTitle: devices[index].isStopped
-                                  ? null
-                                  : LinearPercentIndicator(
-                                      backgroundColor: Color(0xffd6e7ee),
-                                      lineHeight: 5.0,
-                                      percent: devices[index]
-                                              .getRemainingTime()
-                                              .inSeconds /
-                                          devices[index]
-                                              .getTotalDuration()
-                                              .inSeconds,
-                                      progressColor: Color(0xff00477d),
-                                    ),
-                              color: color,
-                              leadingIcon: devices[index].bluetoothConnection !=
-                                          null &&
-                                      devices[index].bluetoothDevice.isBonded
-                                  ? Icons.bluetooth_connected_rounded
-                                  : Icons.bluetooth_rounded,
-                              trailing: Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                color: Color(0xff00477d),
-                              ),
-                              onLongPress: () {
-                                options(devices[index]);
-                              },
-                              onTap: () async {
-                                writeLog(
-                                    "HomePage::onTap() DeviceTile", Log.INFO);
-                                var result = await devices[index].connect();
-                                writeLog(
-                                    "HomePage::onTap() ${devices[index].deviceName} connection status: $result",
-                                    Log.INFO);
-                                if (result) {
-                                  if (devices[index].isStopped)
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                InfoPage(devices[index])));
-                                  else
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                DevicePage(devices[index])));
-                                  setState(() {});
-                                }
-                              }),
-                        );
-                      })),
-            ),
-          )
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Color(0xff00477d),
-        onPressed: () {
-          addDevice();
-        },
-        label: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Icon(Icons.add),
-            Text("Add Device"),
-          ],
         ),
       ),
-    ));
+    );
+  }
+
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to exit the App'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('No'),
+              ),
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: new Text('Yes'),
+              ),
+            ],
+          ),
+        )) ??
+        false;
   }
 
   addDevice() {
